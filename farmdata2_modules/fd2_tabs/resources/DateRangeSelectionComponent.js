@@ -18,57 +18,79 @@ catch(err) {
  * </tbody>
  * </table>
  * 
- * @vue-prop {String} defaultStartDate - the initial start date to be displayed (YYYY-MM-DD).
- * @vue-prop {String} defaultEndDate - the initial end date to be displayed (YYYY-MM-DD).
- * 
+ * @vue-prop {String} setStartDate - the start date to be displayed (YYYY-MM-DD).
+ * @vue-prop {String} setEndDate - the end date to be displayed (YYYY-MM-DD).
+ * @vue-prop {Boolean} [disabled=false] - true to disable both start and end date selection elements, false otherwise.
+ *
  * @vue-event click - Emits an event with no payload when when one of the date selection elements is clicked.  This event does not necessarily indicate a change in date.
- * @vue-event {String} start-date-changed - Emits the selected date (YYYY-MM-DD) when a start date is entered or chosen and the start date selection element loses focus.
- * @vue-event {String} end-date-changed - Emits the selected date (YYYY-MM-DD) when an end date is entered or chosen and the end date selection element loses focus.
+ * @vue-event {String} start-date-changed - Emits the selected date (YYYY-MM-DD) when a start date is entered, chosen, component is mounted, prop is changed, and the start date selection element loses focus.
+ * @vue-event {String} end-date-changed - Emits the selected date (YYYY-MM-DD) when an end date is entered, chosen, component is mounted, prop is changed, and the end date selection element loses focus.
  */
 let DateRangeSelectionComponent = {
     template: `<div>
-                <date-selection data-cy="start-date-select" :defaultDate="defaultStartDate" :latestDate="latestStartDate" @date-changed="startDateChange" 
-                @click="click">
+                <date-selection data-cy="start-date-select" :setDate="setStartDate" :latestDate="latestStartDate" @date-changed="startDateChange" 
+                @click="click" :disabled="isDisabled">
                     Start Date:
                 </date-selection>
-                <date-selection data-cy="end-date-select" :defaultDate="defaultEndDate" :earliestDate="earliestEndDate" @date-changed="endDateChange"
-                @click="click">
+                <br>
+                <date-selection data-cy="end-date-select" :setDate="setEndDate" :earliestDate="earliestEndDate" @date-changed="endDateChange"
+                @click="click" :disabled="isDisabled">
                     End Date:
                 </date-selection>
             </div>
             `,
     props: { 
-        defaultStartDate:{
+        setStartDate:{
             type: String,
             required: true
         },
-        defaultEndDate:{
+        setEndDate:{
             type: String,
             required: true
-        }
+        },
+        disabled: {
+            type: Boolean,
+            default: false
+        } 
     },
     components: {
         'date-selection': DateSelectionComponent,
     },
-    data(){
+    data() {
         return{
-            earliestEndDate: this.defaultStartDate,
-            latestStartDate: this.defaultEndDate,
+            earliestEndDate: this.setStartDate,
+            latestStartDate: this.setEndDate,
+            isDisabled: this.disabled
         }
     },
     methods: {
         click(){
             this.$emit('click')
         },
-        startDateChange(selectedDate){
+        startDateChange(selectedDate) {
             this.earliestEndDate = selectedDate
             this.$emit('start-date-changed', selectedDate)
         },
-        endDateChange(selectedDate){
-            this.latestStartDate=selectedDate
+        endDateChange(selectedDate) {
+            this.latestStartDate = selectedDate
             this.$emit('end-date-changed', selectedDate)
         },
     },
+    mounted() {
+        this.startDateChange(this.earliestEndDate)
+        this.endDateChange(this.latestStartDate)
+    },
+    watch: {
+        setStartDate(newStartDate) {
+            this.startDateChange(newStartDate);
+        },
+        setEndDate(newEndDate) {
+            this.endDateChange(newEndDate);
+        },
+        disabled(newBool) {
+            this.isDisabled = newBool;
+        }
+    }
 }
 
 try {

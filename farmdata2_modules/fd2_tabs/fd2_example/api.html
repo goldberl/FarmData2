@@ -2,7 +2,7 @@
 <!-- apply v-cloak so that app is not visible until after being rendered -->
 <div id="api" v-cloak> 
 
-    <p>FarmData2 accesses, stores and manipulated its data through the farmOS system using its API.  The farmdata2_modules/FarmData2/fd2_tabs/resources/FarmOSAPI.js file provide a library of JavaScript convenience functions for accessing the <a href='https://farmos.org/development/api/'>farmOS API</a>.
+    <p>FarmData2 accesses, stores and manipulated its data through the farmOS system using its API.  The farmdata2_modules/FarmData2/fd2_tabs/resources/FarmOSAPI.js file provide a library of JavaScript convenience functions for accessing the <a href='https://v1.farmos.org/development/api/'>farmOS API</a>.
         
     <p>This page gives examples of how to use these functions to interact with the farmOS databse (E.g. fetch, create, update and delete logs). The FarmOSAPI.js library is included in FarmData2 pages by the associated info file for the module (e.g. fd2_example.info for this page.)</p>
 
@@ -39,14 +39,14 @@
     <p>The button below fetches the seeding logs from May 1, 2020 through May 5, 2020 and displays the dates, crops and locations where the crops that were seeded.</p>
     <UL>
         <button data-cy='fetch-seedings' @click='fetchSeedingLogs'>Fetch Logs</button>
-        <button data-cy='clear-seedings' @click='seedingLogs = []'>Clear</button>
+        <button data-cy='clear-seedings' @click='seedingLogs = null'>Clear</button>
         <p>Result:</p>
         <UL>
             <table border=1px>
                 <tr><th>Date</th><th>Crop</th><th>Area</th></tr>
                 <tr v-for="(log,i) in seedingLogs">
                     <td :data-cy=i+'date'>{{ dayjs.unix(log.timestamp).format("YYYY/MM/DD") }}</td>
-                    <td :data-cy=i+'crop'>{{ idToCropMap.get(JSON.parse(log.data).crop_tid) }}</td>
+                    <td :data-cy=i+'crop'>{{ idToCropMap.get(log.data.crop_tid) }}</td>
                     <td :data-cy=i+'area'>{{ log.movement.area[0].name }}</td>
                 </tr>
             </table>
@@ -61,9 +61,9 @@
         <button data-cy='delete-planting' :disabled='plantedCrop==null' @click='deletePlantingAsset'>Delete Asset</button>
         <p>Result:</p>
         <UL>
-            <LI>Planting Asset ID: <span data-cy=planting-id>{{ plantingID }}</span>
-            <LI>Status: <span data-cy=planting-status>{{ plantingAssetStatus }}</span></LI>
-            <LI>Response: <span data-cy=planting-response>{{ plantingAssetResponse }}</span></LI>
+            <LI>Planting Asset ID: <span data-cy='planting-id'>{{ plantingID }}</span>
+            <LI>Status: <span data-cy='planting-status'>{{ plantingAssetStatus }}</span></LI>
+            <LI>Response: <span data-cy='planting-response'>{{ plantingAssetResponse }}</span></LI>
         </UL>
     </UL>
 </div>
